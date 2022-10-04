@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -61,11 +62,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                String resultado = null;
                 if( !isFileExits() )
                 {
                     Toast.makeText( getApplicationContext() , "No existe archivo" , Toast.LENGTH_LONG ).show();
                     return;
                 }
+                resultado = readFile();
+                if (resultado == null){
+                    Toast.makeText(getApplicationContext(), "Error al leer el archivo", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                editTextRead.setText((resultado));
             }
         });
     }
@@ -106,6 +114,36 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         return false;
+    }
+    private String readFile( )
+    {
+        File file = null;
+        FileInputStream fileInputStream = null;
+        byte bytes [ ] = null;
+        try
+        {
+            file = getFile();
+            if (file == null){
+                return null;
+            }
+            fileInputStream = new FileInputStream(file);
+            bytes = new byte[ (int) file.length()];
+            if(fileInputStream.read(bytes)<= -1){
+                fileInputStream.close();
+                return null;
+            }
+            fileInputStream.close();
+            return new String(bytes);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
